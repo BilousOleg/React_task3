@@ -23,5 +23,3 @@ function getWeather(options) {
 }
 
 export default getWeather;
-
-// https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,wind_speed_10m&wind_speed_unit=ms&temperature_unit=celsius

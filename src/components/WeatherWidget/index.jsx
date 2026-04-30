@@ -30,6 +30,10 @@ class WeatherWidget extends Component {
     this.setState({ currentWeather: newWeather });
   };
 
+  setWeatherUnits = (newWeatherUnits) => {
+    this.setState({ queryOptions: newWeatherUnits });
+  };
+
   loadWeather = () => {
     const { queryOptions } = this.state;
 
@@ -72,17 +76,21 @@ class WeatherWidget extends Component {
   render() {
     const {
       currentWeather: { windSpeed, temperature },
+      queryOptions,
       isFetching,
       error,
     } = this.state;
 
-    console.log(this.state);
+    // console.log(this.state);
 
     return (
       <>
         {!isFetching && !error && (
           <article>
-            <SelectWeather />
+            <SelectWeather
+              weatherUnits={queryOptions}
+              setWeatherUnits={this.setWeatherUnits}
+            />
             <CurrentWeather
               currentWindSpeed={windSpeed}
               currentTemperature={temperature}
