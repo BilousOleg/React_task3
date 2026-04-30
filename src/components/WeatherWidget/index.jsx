@@ -97,6 +97,8 @@ class WeatherWidget extends Component {
           <CurrentWeather
             currentWindSpeed={windSpeed}
             currentTemperature={temperature}
+            windSpeedUnit={weatherUnits.windSpeedUnit}
+            temperatureUnit={weatherUnits.temperatureUnit}
             isFetching={isFetching}
             error={error}
           />
