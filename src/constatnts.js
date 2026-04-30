@@ -1,9 +1,9 @@
 const CONSTANTS = {
   UNITS: {
-    MPS: 'mps',
-    KPH: 'kph',
-    CELS: 'Celsius',
-    FAHR: 'Fahrenheit',
+    MPS: 'ms',
+    KPH: 'kmh',
+    CELS: 'celsius',
+    FAHR: 'fahrenheit',
   },
 };
 
