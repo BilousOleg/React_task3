@@ -4,7 +4,10 @@ import CurrentWeather from './CurrentWeather';
 import SelectWeather from './SelectWeather';
 import CONSTANTS from '../../constatnts';
 
-const { MPS, CELS } = CONSTANTS.UNITS;
+const {
+  SPEED: { MPS },
+  TEMPERATURE: { CELS },
+} = CONSTANTS.UNITS;
 
 class WeatherWidget extends Component {
   constructor(props) {
@@ -16,8 +19,8 @@ class WeatherWidget extends Component {
         temperature: null,
       },
       // Оскільки задача компонента - саме ПЕРЕМИКАТИ одиниці вимірювання, передаю лише їх, тобто кількість параметрів фіксована (2)
-      // адже інакше треба було б змінювати і select в компоненті SelectWeather динамічно під кікльість параметрів
-      queryOptions: {
+      // адже інакше треба було б змінювати і select'и в компоненті SelectWeather динамічно під кікльість параметрів
+      weatherUnits: {
         windSpeedUnit: MPS,
         temperatureUnit: CELS,
       },
@@ -26,16 +29,18 @@ class WeatherWidget extends Component {
     };
   }
 
+  // Просто службовий метод, можна було обійтись без нього
   setWeather = (newWeather) => {
     this.setState({ currentWeather: newWeather });
   };
 
   setWeatherUnits = (newWeatherUnits) => {
-    this.setState({ queryOptions: newWeatherUnits });
+    this.setState({ weatherUnits: newWeatherUnits });
   };
 
+  // Так само, службовий метод для єдиної відповідальності за fetch
   loadWeather = () => {
-    const { queryOptions } = this.state;
+    const { weatherUnits: queryOptions } = this.state;
 
     this.setState({ isFetching: true });
     getWeather(queryOptions)
@@ -55,14 +60,14 @@ class WeatherWidget extends Component {
   componentDidUpdate(
     prevProps,
     {
-      queryOptions: {
+      weatherUnits: {
         windSpeedUnit: prevWindSpeedUnit,
         temperatureUnit: prevTemperatureUnit,
       },
     }
   ) {
     const {
-      queryOptions: { windSpeedUnit, temperatureUnit },
+      weatherUnits: { windSpeedUnit, temperatureUnit },
     } = this.state;
 
     if (
@@ -76,27 +81,28 @@ class WeatherWidget extends Component {
   render() {
     const {
       currentWeather: { windSpeed, temperature },
-      queryOptions,
+      weatherUnits,
       isFetching,
       error,
     } = this.state;
 
-    // console.log(this.state);
-
     return (
       <>
-        {!isFetching && !error && (
-          <article>
-            <SelectWeather
-              weatherUnits={queryOptions}
-              setWeatherUnits={this.setWeatherUnits}
-            />
+        <article>
+          <SelectWeather
+            weatherUnits={weatherUnits}
+            setWeatherUnits={this.setWeatherUnits}
+          />
+          {/* Умовний рендеринг лише тієї частини, яка відповідає за відображення і яка може змінюватись */}
+          {error && <div>An error occured!</div>}
+          {isFetching && !error && <div>Loading. Please, wait...</div>}
+          {!isFetching && !error && (
             <CurrentWeather
               currentWindSpeed={windSpeed}
               currentTemperature={temperature}
             />
-          </article>
-        )}
+          )}
+        </article>
       </>
     );
   }

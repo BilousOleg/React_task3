@@ -1,6 +1,9 @@
 import CONSTANTS from '../../constatnts';
 
-const { MPS, KPH, CELS, FAHR } = CONSTANTS.UNITS;
+const {
+  SPEED: { MPS, KPH },
+  TEMPERATURE: { CELS, FAHR },
+} = CONSTANTS.UNITS;
 
 function SelectWeather({ weatherUnits, setWeatherUnits }) {
   const changeWeather = ({ target: { name, value } }) => {
