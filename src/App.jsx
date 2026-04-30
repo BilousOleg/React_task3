@@ -1,5 +1,11 @@
+import WeatherWidget from './components/WeatherWidget';
+
 function App() {
-  return <div>App</div>;
+  return (
+    <>
+      <WeatherWidget />
+    </>
+  );
 }
 
 export default App;
