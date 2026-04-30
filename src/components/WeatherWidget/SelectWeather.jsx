@@ -3,8 +3,10 @@ import CONSTANTS from '../../constatnts';
 const { MPS, KPH, CELS, FAHR } = CONSTANTS.UNITS;
 
 function SelectWeather() {
+  const changeWeather = ({ target: { value } }) => {};
+
   return (
-    <section>
+    <section /* value={} onChange={changeWeather}*/>
       <label>
         <span>Wind speed unit</span>
         <select>

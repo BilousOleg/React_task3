@@ -11,8 +11,10 @@ class WeatherWidget extends Component {
     super(props);
 
     this.state = {
-      currentWindSpeed: null,
-      currentTemperature: null,
+      currentWeather: {
+        windSpeed: null,
+        temperature: null,
+      },
       // Оскільки задача компонента - саме ПЕРЕМИКАТИ одиниці вимірювання, передаю лише їх, тобто кількість параметрів фіксована (2)
       // адже інакше треба було б змінювати і select в компоненті SelectWeather динамічно під кікльість параметрів
       queryOptions: {
@@ -24,6 +26,10 @@ class WeatherWidget extends Component {
     };
   }
 
+  setWeather = (newWeather) => {
+    this.setState({ currentWeather: newWeather });
+  };
+
   loadWeather = () => {
     const { queryOptions } = this.state;
 
@@ -32,11 +38,7 @@ class WeatherWidget extends Component {
       .then(
         ({
           current: { temperature_2m: temperature, wind_speed_10m: windSpeed },
-        }) =>
-          this.setState({
-            currentWindSpeed: windSpeed,
-            currentTemperature: temperature,
-          })
+        }) => this.setWeather({ windSpeed, temperature })
       )
       .catch((error) => this.setState({ error: error }))
       .finally(() => this.setState({ isFetching: false }));
@@ -46,19 +48,35 @@ class WeatherWidget extends Component {
     this.loadWeather();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { currentWindSpeed, currentTemperature } = this.state;
+  componentDidUpdate(
+    prevProps,
+    {
+      queryOptions: {
+        windSpeedUnit: prevWindSpeedUnit,
+        temperatureUnit: prevTemperatureUnit,
+      },
+    }
+  ) {
+    const {
+      queryOptions: { windSpeedUnit, temperatureUnit },
+    } = this.state;
+
     if (
-      currentWindSpeed !== prevState.currentWindSpeed ||
-      currentTemperature !== prevState.currentTemperature
+      windSpeedUnit !== prevWindSpeedUnit ||
+      temperatureUnit !== prevTemperatureUnit
     ) {
       this.loadWeather();
     }
   }
 
   render() {
-    const { currentTemperature, currentWindSpeed, isFetching, error } =
-      this.state;
+    const {
+      currentWeather: { windSpeed, temperature },
+      isFetching,
+      error,
+    } = this.state;
+
+    console.log(this.state);
 
     return (
       <>
@@ -66,8 +84,8 @@ class WeatherWidget extends Component {
           <article>
             <SelectWeather />
             <CurrentWeather
-              currentWindSpeed={currentWindSpeed}
-              currentTemperature={currentTemperature}
+              currentWindSpeed={windSpeed}
+              currentTemperature={temperature}
             />
           </article>
         )}
