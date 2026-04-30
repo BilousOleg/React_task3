@@ -1,4 +1,5 @@
-import CONSTANTS from '../../constatnts';
+import CONSTANTS from '../../../constatnts';
+import styles from './SelectWeather.module.sass';
 
 const {
   SPEED: { MPS, KPH },
@@ -14,7 +15,7 @@ function SelectWeather({ weatherUnits, setWeatherUnits }) {
   };
 
   return (
-    <section>
+    <section className={styles.selectWeather}>
       <label>
         <span>Wind speed unit</span>
         <select

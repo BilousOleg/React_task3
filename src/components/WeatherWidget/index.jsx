@@ -3,6 +3,7 @@ import getWeather from '../../api';
 import CurrentWeather from './CurrentWeather';
 import SelectWeather from './SelectWeather';
 import CONSTANTS from '../../constatnts';
+import styles from './WeatherWidget.module.sass';
 
 const {
   SPEED: { MPS },
@@ -88,20 +89,17 @@ class WeatherWidget extends Component {
 
     return (
       <>
-        <article>
+        <article className={styles.weatherWidget}>
           <SelectWeather
             weatherUnits={weatherUnits}
             setWeatherUnits={this.setWeatherUnits}
           />
-          {/* Умовний рендеринг лише тієї частини, яка відповідає за відображення і яка може змінюватись */}
-          {error && <div>An error occured!</div>}
-          {isFetching && !error && <div>Loading. Please, wait...</div>}
-          {!isFetching && !error && (
-            <CurrentWeather
-              currentWindSpeed={windSpeed}
-              currentTemperature={temperature}
-            />
-          )}
+          <CurrentWeather
+            currentWindSpeed={windSpeed}
+            currentTemperature={temperature}
+            isFetching={isFetching}
+            error={error}
+          />
         </article>
       </>
     );
