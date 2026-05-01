@@ -12,7 +12,6 @@ function SelectWeather({
   setWindSpeedUnit,
   setTemperatureUnit,
 }) {
-  // Два різних обробники через роздільний state, хоча можна і в одному + перевірка target.name
   const changeTemperature = ({ target: { value } }) => {
     setTemperatureUnit(value);
   };

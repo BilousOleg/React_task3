@@ -14,29 +14,22 @@ class WeatherWidget extends Component {
   constructor(props) {
     super(props);
 
-    // По-суті зараз весь state можна об'єднати в два об'єкти - для temperature та windSpeed, але зараз так
     this.state = {
       windSpeed: null,
       temperature: null,
-      // Оскільки задача компонента - саме ПЕРЕМИКАТИ одиниці вимірювання, передаю лише їх, тобто кількість параметрів фіксована (2)
-      // адже інакше треба було б змінювати і select'и в компоненті SelectWeather динамічно під кікльість параметрів
       windSpeedUnit: MPS,
       temperatureUnit: CELS,
-      // Розділив стан для двох завантажень окремо.
       isFetchingWindSpeed: false,
       isFetchingTemperature: false,
-      // Розділив помилки для двох завантажень окремо.
       windSpeedError: null,
       temperatureError: null,
     };
   }
 
-  // Просто службовий метод, можна було обійтись без нього
   setWindSpeed = (newWindSpeed) => {
     this.setState({ windSpeed: newWindSpeed });
   };
 
-  // Просто службовий метод, можна було обійтись без нього
   setTemperature = (newTemperature) => {
     this.setState({ temperature: newTemperature });
   };
@@ -49,7 +42,6 @@ class WeatherWidget extends Component {
     this.setState({ temperatureUnit: newTemperatureUnit });
   };
 
-  // Окремий метод підвантаження швидкості повітря
   loadWindSpeed = () => {
     const { windSpeedUnit } = this.state;
 
@@ -63,7 +55,6 @@ class WeatherWidget extends Component {
       .finally(() => this.setState({ isFetchingWindSpeed: false }));
   };
 
-  // Окремий метод підвантаження температури
   loadTemperature = () => {
     const { temperatureUnit } = this.state;
 
@@ -91,7 +82,7 @@ class WeatherWidget extends Component {
     if (windSpeedUnit !== prevWindSpeedUnit) {
       this.loadWindSpeed();
     }
-    // Можна й else додати, оскільки фактично неможливо одночасно перемикнути і температуру і швидкість повітря в select
+
     if (temperatureUnit !== prevTemperatureUnit) {
       this.loadTemperature();
     }

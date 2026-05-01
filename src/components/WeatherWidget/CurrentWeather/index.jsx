@@ -29,8 +29,6 @@ function CurrentWeather({
     <section className={styles.currentWeather}>
       <h2>Current Weather</h2>
       <ul className={styles.weatherDataList}>
-        {/* Компоненти абсолютно ідентичні, тому зробив один шаблонний замість двох різних */}
-        {/* Умовний рендеринг лише тієї частини, яка відповідає за відображення і яка може змінюватись */}
         {windSpeedError && (
           <li className={styles.errorMsg}>An error occured!</li>
         )}
@@ -45,7 +43,6 @@ function CurrentWeather({
           />
         )}
 
-        {/* Умовний рендеринг лише тієї частини, яка відповідає за відображення і яка може змінюватись */}
         {temperatureError && (
           <li className={styles.errorMsg}>An error occured!</li>
         )}
