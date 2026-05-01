@@ -1,5 +1,6 @@
 import styles from './CurrentWeather.module.sass';
 import { FaTemperatureLow, FaWind } from 'react-icons/fa';
+import Current from './Current';
 
 function getRealUnit(unit) {
   switch (unit) {
@@ -19,30 +20,46 @@ function CurrentWeather({
   currentTemperature,
   windSpeedUnit,
   temperatureUnit,
-  isFetching,
-  error,
+  isFetchingWindSpeed,
+  isFetchingTemperature,
+  windSpeedError,
+  temperatureError,
 }) {
   return (
     <section className={styles.currentWeather}>
-      {error && <h2 className={styles.errorMsg}>An error occured!</h2>}
-      {isFetching && !error && <h2>Loading. Please, wait...</h2>}
-      {!isFetching && !error && (
-        <>
-          <h2>Current Weather</h2>
-          <ul className={styles.weatherDataList}>
-            <li>
-              <FaWind />
-              <span className={styles.weatherData}>{currentWindSpeed}</span>
-              {getRealUnit(windSpeedUnit)}
-            </li>
-            <li>
-              <FaTemperatureLow />
-              <span className={styles.weatherData}>{currentTemperature}</span>
-              {getRealUnit(temperatureUnit)}
-            </li>
-          </ul>
-        </>
-      )}
+      <h2>Current Weather</h2>
+      <ul className={styles.weatherDataList}>
+        {/* Компоненти абсолютно ідентичні, тому зробив один шаблонний замість двох різних */}
+        {/* Умовний рендеринг лише тієї частини, яка відповідає за відображення і яка може змінюватись */}
+        {windSpeedError && (
+          <li className={styles.errorMsg}>An error occured!</li>
+        )}
+        {isFetchingWindSpeed && !windSpeedError && (
+          <li>Loading. Please, wait...</li>
+        )}
+        {!isFetchingWindSpeed && !windSpeedError && (
+          <Current
+            valueIcon={<FaWind />}
+            currentValue={currentWindSpeed}
+            realValueUnit={getRealUnit(windSpeedUnit)}
+          />
+        )}
+
+        {/* Умовний рендеринг лише тієї частини, яка відповідає за відображення і яка може змінюватись */}
+        {temperatureError && (
+          <li className={styles.errorMsg}>An error occured!</li>
+        )}
+        {isFetchingTemperature && !temperatureError && (
+          <li>Loading. Please, wait...</li>
+        )}
+        {!isFetchingTemperature && !temperatureError && (
+          <Current
+            valueIcon={<FaTemperatureLow />}
+            currentValue={currentTemperature}
+            realValueUnit={getRealUnit(temperatureUnit)}
+          />
+        )}
+      </ul>
     </section>
   );
 }

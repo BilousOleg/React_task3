@@ -6,12 +6,19 @@ const {
   TEMPERATURE: { CELS, FAHR },
 } = CONSTANTS.UNITS;
 
-function SelectWeather({ weatherUnits, setWeatherUnits }) {
-  const changeWeather = ({ target: { name, value } }) => {
-    setWeatherUnits({
-      ...weatherUnits,
-      [name]: value,
-    });
+function SelectWeather({
+  windSpeedUnit,
+  temperatureUnit,
+  setWindSpeedUnit,
+  setTemperatureUnit,
+}) {
+  // Два різних обробники через роздільний state, хоча можна і в одному + перевірка target.name
+  const changeTemperature = ({ target: { value } }) => {
+    setTemperatureUnit(value);
+  };
+
+  const changeWindSpeed = ({ target: { value } }) => {
+    setWindSpeedUnit(value);
   };
 
   return (
@@ -20,8 +27,8 @@ function SelectWeather({ weatherUnits, setWeatherUnits }) {
         <span>Wind speed unit</span>
         <select
           name="windSpeedUnit"
-          value={weatherUnits.windSpeedUnit}
-          onChange={changeWeather}
+          value={windSpeedUnit}
+          onChange={changeWindSpeed}
         >
           <option value={MPS}>M/s</option>
           <option value={KPH}>Km/h</option>
@@ -31,8 +38,8 @@ function SelectWeather({ weatherUnits, setWeatherUnits }) {
         <span>Temperature unit</span>
         <select
           name="temperatureUnit"
-          value={weatherUnits.temperatureUnit}
-          onChange={changeWeather}
+          value={temperatureUnit}
+          onChange={changeTemperature}
         >
           <option value={CELS}>°C</option>
           <option value={FAHR}>°F</option>

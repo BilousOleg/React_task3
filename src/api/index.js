@@ -1,22 +1,15 @@
-import queryString from 'query-string';
 import CONFIGS from './../configs';
 
-function normalizeKeys(object) {
-  return Object.fromEntries(
-    Object.entries(object).map(([key, value]) => [
-      key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`),
-      value,
-    ])
-  );
-}
-
-function getWeather(options) {
-  const normalizedOptions = normalizeKeys(options);
-  const queryOptionsStringified = queryString.stringify(normalizedOptions);
-
+function getWindSpeed(windSpeedUnit) {
   return fetch(
-    `${CONFIGS.BASE_URL}?${CONFIGS.DEFAULT_PARAMS}&${queryOptionsStringified}`
+    `${CONFIGS.BASE_URL}?${CONFIGS.DEFAULT_PARAMS}&current=wind_speed_10m&wind_speed_unit=${windSpeedUnit}`
   ).then((response) => response.json());
 }
 
-export default getWeather;
+function getTemperature(temperatureUnit) {
+  return fetch(
+    `${CONFIGS.BASE_URL}?${CONFIGS.DEFAULT_PARAMS}&current=temperature_2m&temperature_unit=${temperatureUnit}`
+  ).then((response) => response.json());
+}
+
+export { getWindSpeed, getTemperature };
