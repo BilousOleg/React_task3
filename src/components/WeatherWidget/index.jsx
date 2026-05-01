@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import getWeather from '../../api';
+import { Component } from 'react';
+import { getWindSpeed, getTemperature } from '../../api';
 import CurrentWeather from './CurrentWeather';
 import SelectWeather from './SelectWeather';
 import CONSTANTS from '../../constatnts';
@@ -14,93 +14,119 @@ class WeatherWidget extends Component {
   constructor(props) {
     super(props);
 
+    // По-суті зараз весь state можна об'єднати в два об'єкти - для temperature та windSpeed, але зараз так
     this.state = {
-      currentWeather: {
-        windSpeed: null,
-        temperature: null,
-      },
+      windSpeed: null,
+      temperature: null,
       // Оскільки задача компонента - саме ПЕРЕМИКАТИ одиниці вимірювання, передаю лише їх, тобто кількість параметрів фіксована (2)
       // адже інакше треба було б змінювати і select'и в компоненті SelectWeather динамічно під кікльість параметрів
-      weatherUnits: {
-        windSpeedUnit: MPS,
-        temperatureUnit: CELS,
-      },
-      isFetching: false,
-      error: null,
+      windSpeedUnit: MPS,
+      temperatureUnit: CELS,
+      // Розділив стан для двох завантажень окремо.
+      isFetchingWindSpeed: false,
+      isFetchingTemperature: false,
+      // Розділив помилки для двох завантажень окремо.
+      windSpeedError: null,
+      temperatureError: null,
     };
   }
 
   // Просто службовий метод, можна було обійтись без нього
-  setWeather = (newWeather) => {
-    this.setState({ currentWeather: newWeather });
+  setWindSpeed = (newWindSpeed) => {
+    this.setState({ windSpeed: newWindSpeed });
   };
 
-  setWeatherUnits = (newWeatherUnits) => {
-    this.setState({ weatherUnits: newWeatherUnits });
+  // Просто службовий метод, можна було обійтись без нього
+  setTemperature = (newTemperature) => {
+    this.setState({ temperature: newTemperature });
   };
 
-  // Так само, службовий метод для єдиної відповідальності за fetch
-  loadWeather = () => {
-    const { weatherUnits: queryOptions } = this.state;
+  setWindSpeedUnit = (newWindSpeedUnit) => {
+    this.setState({ windSpeedUnit: newWindSpeedUnit });
+  };
 
-    this.setState({ isFetching: true });
-    getWeather(queryOptions)
-      .then(
-        ({
-          current: { temperature_2m: temperature, wind_speed_10m: windSpeed },
-        }) => this.setWeather({ windSpeed, temperature })
+  setTemperatureUnit = (newTemperatureUnit) => {
+    this.setState({ temperatureUnit: newTemperatureUnit });
+  };
+
+  // Окремий метод підвантаження швидкості повітря
+  loadWindSpeed = () => {
+    const { windSpeedUnit } = this.state;
+
+    this.setState({ isFetchingWindSpeed: true });
+
+    getWindSpeed(windSpeedUnit)
+      .then(({ current: { wind_speed_10m: windSpeed } }) =>
+        this.setWindSpeed(windSpeed)
       )
-      .catch((error) => this.setState({ error: error }))
-      .finally(() => this.setState({ isFetching: false }));
+      .catch((error) => this.setState({ windSpeedError: error }))
+      .finally(() => this.setState({ isFetchingWindSpeed: false }));
+  };
+
+  // Окремий метод підвантаження температури
+  loadTemperature = () => {
+    const { temperatureUnit } = this.state;
+
+    this.setState({ isFetchingTemperature: true });
+
+    getTemperature(temperatureUnit)
+      .then(({ current: { temperature_2m: temperature } }) =>
+        this.setTemperature(temperature)
+      )
+      .catch((error) => this.setState({ temperatureError: error }))
+      .finally(() => this.setState({ isFetchingTemperature: false }));
   };
 
   componentDidMount() {
-    this.loadWeather();
+    this.loadWindSpeed();
+    this.loadTemperature();
   }
 
   componentDidUpdate(
     prevProps,
-    {
-      weatherUnits: {
-        windSpeedUnit: prevWindSpeedUnit,
-        temperatureUnit: prevTemperatureUnit,
-      },
-    }
+    { windSpeedUnit: prevWindSpeedUnit, temperatureUnit: prevTemperatureUnit }
   ) {
-    const {
-      weatherUnits: { windSpeedUnit, temperatureUnit },
-    } = this.state;
+    const { windSpeedUnit, temperatureUnit } = this.state;
 
-    if (
-      windSpeedUnit !== prevWindSpeedUnit ||
-      temperatureUnit !== prevTemperatureUnit
-    ) {
-      this.loadWeather();
+    if (windSpeedUnit !== prevWindSpeedUnit) {
+      this.loadWindSpeed();
+    }
+    // Можна й else додати, оскільки фактично неможливо одночасно перемикнути і температуру і швидкість повітря в select
+    if (temperatureUnit !== prevTemperatureUnit) {
+      this.loadTemperature();
     }
   }
 
   render() {
     const {
-      currentWeather: { windSpeed, temperature },
-      weatherUnits,
-      isFetching,
-      error,
+      windSpeed,
+      temperature,
+      windSpeedUnit,
+      temperatureUnit,
+      isFetchingTemperature,
+      isFetchingWindSpeed,
+      windSpeedError,
+      temperatureError,
     } = this.state;
 
     return (
       <>
         <article className={styles.weatherWidget}>
           <SelectWeather
-            weatherUnits={weatherUnits}
-            setWeatherUnits={this.setWeatherUnits}
+            windSpeedUnit={windSpeedUnit}
+            temperatureUnit={temperatureUnit}
+            setWindSpeedUnit={this.setWindSpeedUnit}
+            setTemperatureUnit={this.setTemperatureUnit}
           />
           <CurrentWeather
             currentWindSpeed={windSpeed}
             currentTemperature={temperature}
-            windSpeedUnit={weatherUnits.windSpeedUnit}
-            temperatureUnit={weatherUnits.temperatureUnit}
-            isFetching={isFetching}
-            error={error}
+            windSpeedUnit={windSpeedUnit}
+            temperatureUnit={temperatureUnit}
+            isFetchingWindSpeed={isFetchingWindSpeed}
+            isFetchingTemperature={isFetchingTemperature}
+            windSpeedError={windSpeedError}
+            temperatureError={temperatureError}
           />
         </article>
       </>
